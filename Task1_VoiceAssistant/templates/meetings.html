@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Upcoming Meetings</h2>
+
+{% if role in ["hr","manager"] %}
+
+<form method="POST">
+
+Title
+<input type="text" name="title" class="form-control">
+
+<br>
+
+Date
+<input type="date" name="date" class="form-control">
+
+<br>
+
+Time
+<input type="time" name="time" class="form-control">
+
+<br>
+
+<button class="btn btn-primary">Schedule Meeting</button>
+
+</form>
+
+{% endif %}
+
+<br><br>
+
+<table class="table table-bordered">
+
+<tr>
+<th>Title</th>
+<th>Date</th>
+<th>Time</th>
+<th>Created By</th>
+
+{% if role in ["hr","manager"] %}
+<th>Action</th>
+{% endif %}
+
+</tr>
+
+{% for m in meetings %}
+
+<tr>
+
+<td>{{ m[1] }}</td>
+<td>{{ m[2] }}</td>
+<td>{{ m[3] }}</td>
+<td>{{ m[4] }}</td>
+
+{% if role in ["hr","manager"] %}
+
+<td>
+
+<a href="/edit_meeting/{{ m[0] }}" class="btn btn-warning btn-sm">Edit</a>
+
+<a href="/delete_meeting/{{ m[0] }}" class="btn btn-danger btn-sm">Delete</a>
+
+</td>
+
+{% endif %}
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
