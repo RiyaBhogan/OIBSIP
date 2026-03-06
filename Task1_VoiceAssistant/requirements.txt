@@ -1,0 +1,6 @@
+Flask
+gunicorn
+apscheduler
+gTTS
+playsound
+plyer
