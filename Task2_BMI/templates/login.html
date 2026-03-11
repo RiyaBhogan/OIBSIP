@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitalTrack — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --mint: #00c9a7;
+    --emerald: #00a885;
+    --deep: #0a1628;
+    --card: #111e35;
+    --border: rgba(0,201,167,0.18);
+    --text: #e8f0fe;
+    --muted: #7a8ca8;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--deep);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated background blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--mint); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob-2 { width: 400px; height: 400px; background: #4a90e2; bottom: -80px; right: -80px; animation-delay: -4s; }
+  .blob-3 { width: 300px; height: 300px; background: #ff6b81; top: 50%; left: 50%; animation-delay: -8s; }
+
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(40px, 30px) scale(1.08); }
+  }
+
+  /* Grid overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,201,167,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,201,167,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .wrapper {
+    display: flex;
+    width: 900px;
+    max-width: 95vw;
+    min-height: 540px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Left panel */
+  .panel-left {
+    flex: 1.1;
+    background: linear-gradient(145deg, #00c9a7 0%, #0088cc 60%, #1a0a3e 100%);
+    padding: 52px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel-left::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 60px solid rgba(255,255,255,0.07);
+    bottom: -80px; right: -80px;
+  }
+  .panel-left::before {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 40px solid rgba(255,255,255,0.06);
+    top: -40px; left: 40%;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    backdrop-filter: blur(10px);
+  }
+
+  .brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .panel-tagline {
+    position: relative; z-index: 1;
+  }
+
+  .panel-tagline h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+
+  .panel-tagline p {
+    color: rgba(255,255,255,0.75);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 20px;
+    position: relative; z-index: 1;
+  }
+
+  .stat-chip {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .stat-chip .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
+  }
+
+  .stat-chip .lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 2px;
+  }
+
+  /* Right panel */
+  .panel-right {
+    flex: 1;
+    background: var(--card);
+    padding: 52px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .form-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .form-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .field input:focus {
+    border-color: var(--mint);
+    background: rgba(0,201,167,0.06);
+    box-shadow: 0 0 0 3px rgba(0,201,167,0.12);
+  }
+
+  .field input::placeholder { color: rgba(255,255,255,0.2); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--mint), var(--emerald));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(0,201,167,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(0,201,167,0.4);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .form-footer a {
+    color: var(--mint);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .form-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="wrapper">
+    <div class="panel-left">
+      <div class="brand">
+        <div class="brand-icon">💚</div>
+        <span class="brand-name">VitalTrack</span>
+      </div>
+      <div class="panel-tagline">
+        <h1>Your health journey starts here</h1>
+        <p>Track BMI, monitor weight, and get personalized diet plans — all in one smart dashboard.</p>
+      </div>
+      <div class="stats-row">
+        
+        
+        
+      </div>
+    </div>
+
+    <div class="panel-right">
+      <div class="form-title">Welcome back</div>
+      <div class="form-sub">Sign in to your account to continue</div>
+
+      <form method="POST">
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter your password"required>
+        </div>
+        <button type="submit" class="btn-primary">Sign In →</button>
+      </form>
+
+      <div class="divider">or</div>
+
+      <div class="form-footer">
+        Don't have an account? <a href="/register">Create one</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

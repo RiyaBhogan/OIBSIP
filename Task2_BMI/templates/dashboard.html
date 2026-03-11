@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitalTrack — Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+--mint:#00c9a7;
+--emerald:#00a885;
+--deep:#0a1628;
+--card:#111e35;
+--border2:rgba(255,255,255,0.07);
+--text:#e8f0fe;
+--muted:#7a8ca8;
+--blue:#4a90e2;
+--coral:#ff6b81;
+--amber:#f5a623;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:var(--deep);
+color:var(--text);
+min-height:100vh;
+}
+
+nav{
+position:sticky;
+top:0;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 40px;
+height:64px;
+background:rgba(10,22,40,0.85);
+backdrop-filter:blur(20px);
+border-bottom:1px solid var(--border2);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.brand-icon{
+width:36px;
+height:36px;
+background:linear-gradient(135deg,var(--mint),var(--emerald));
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+}
+
+.brand-name{
+font-family:'Poppins',sans-serif;
+font-size:18px;
+font-weight:800;
+}
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+.welcome-chip{
+background:var(--card);
+border:1px solid var(--border2);
+border-radius:100px;
+padding:6px 14px;
+font-size:13px;
+color:var(--muted);
+}
+
+.welcome-chip span{
+color:var(--text);
+font-weight:500;
+}
+
+.btn-logout{
+background:rgba(255,92,92,0.12);
+border:1px solid rgba(255,92,92,0.25);
+color:#ff7070;
+padding:7px 16px;
+border-radius:8px;
+font-size:13px;
+text-decoration:none;
+}
+
+main{
+max-width:1100px;
+margin:0 auto;
+padding:36px 40px 60px;
+}
+
+.page-header{
+margin-bottom:32px;
+}
+
+.page-header h1{
+font-family:'Syne',sans-serif;
+font-size:26px;
+font-weight:700;
+}
+
+.page-header p{
+color:var(--muted);
+font-size:14px;
+margin-top:4px;
+}
+
+.section-label{
+font-family:'Poppins',sans-serif;
+font-size:11px;
+font-weight:700;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.section-label::after{
+content:'';
+flex:1;
+height:1px;
+background:var(--border2);
+}
+
+.tools-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+margin-bottom:36px;
+}
+
+.tool-card{
+padding:28px 24px;
+border-radius:16px;
+text-decoration:none;
+display:flex;
+flex-direction:column;
+gap:12px;
+color:var(--text);
+}
+
+.bmi{background:rgba(74,144,226,0.12);}
+.diet{background:rgba(255,107,129,0.12);}
+.tracker{background:rgba(245,166,35,0.12);}
+
+.tool-icon{font-size:26px;}
+
+.tool-name{
+font-family:'Poppins',sans-serif;
+font-size:17px;
+font-weight:700;
+}
+
+.tool-desc{
+font-size:13px;
+color:var(--muted);
+}
+
+.summary-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+margin-bottom:36px;
+}
+
+.stat-card{
+background:var(--card);
+border:1px solid var(--border2);
+border-radius:16px;
+padding:24px;
+}
+
+.stat-label{
+font-size:11px;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:10px;
+}
+
+.stat-value{
+font-family:'Poppins',sans-serif;
+font-size:32px;
+font-weight:800;
+}
+
+.stat-unit{
+font-size:14px;
+color:var(--muted);
+margin-left:4px;
+}
+
+.stat-tag{
+margin-top:8px;
+display:inline-block;
+font-size:11px;
+padding:3px 10px;
+border-radius:100px;
+background:rgba(0,201,167,0.12);
+color:var(--mint);
+}
+
+.progress-card{
+background:var(--card);
+border:1px solid var(--border2);
+border-radius:16px;
+padding:28px;
+margin-bottom:36px;
+}
+
+.progress-header{
+display:flex;
+justify-content:space-between;
+margin-bottom:18px;
+}
+
+.progress-title{
+font-family:'Poppins',sans-serif;
+font-size:16px;
+font-weight:700;
+}
+
+.progress-pct{
+font-family:'Poppins',sans-serif;
+font-size:22px;
+font-weight:800;
+color:var(--mint);
+}
+
+.progress-track{
+height:10px;
+background:rgba(255,255,255,0.07);
+border-radius:100px;
+overflow:hidden;
+}
+
+.progress-fill{
+height:100%;
+background:linear-gradient(90deg,var(--mint),var(--blue));
+border-radius:100px;
+width:{{progress}}%;
+}
+
+.graph-card{
+background:var(--card);
+border:1px solid var(--border2);
+border-radius:16px;
+padding:28px;
+}
+
+.graph-card img{
+width:100%;
+border-radius:10px;
+margin-top:16px;
+}
+
+.empty-chart{
+padding:40px;
+text-align:center;
+color:var(--muted);
+font-size:14px;
+}
+
+/* CHATBOT */
+
+.chatbot-icon{
+position:fixed;
+bottom:25px;
+right:25px;
+background:#4a90e2;
+color:white;
+width:60px;
+height:60px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:26px;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+
+.chatbot-box{
+position:fixed;
+bottom:100px;
+right:25px;
+width:320px;
+background:#111e35;
+border-radius:12px;
+border:1px solid var(--border2);
+display:none;
+}
+
+.chat-header{
+background:#4a90e2;
+color:white;
+padding:12px;
+border-radius:12px 12px 0 0;
+font-weight:bold;
+}
+
+#chat-messages{
+height:240px;
+overflow-y:auto;
+padding:10px;
+font-size:13px;
+}
+
+.user{
+text-align:right;
+background:#4a90e2;
+padding:6px;
+margin:6px;
+border-radius:6px;
+}
+
+.bot{
+text-align:left;
+background:#1f2d4d;
+padding:6px;
+margin:6px;
+border-radius:6px;
+}
+
+.chat-input{
+display:flex;
+border-top:1px solid var(--border2);
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+background:#0a1628;
+color:white;
+}
+
+.chat-input button{
+background:#4a90e2;
+border:none;
+padding:10px;
+color:white;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="brand">
+<div class="brand-icon">💚</div>
+<span class="brand-name">VitalTrack</span>
+</div>
+
+<div class="nav-right">
+<div class="welcome-chip">Hello, <span>{{name}}</span> 👋</div>
+<a href="/logout" class="btn-logout">Sign out</a>
+</div>
+</nav>
+
+<main>
+
+<div class="page-header">
+<h1>Your Health Dashboard</h1>
+<p>Track your progress and stay on top of your health goals.</p>
+</div>
+
+<div class="section-label">Health Tools</div>
+
+<div class="tools-grid">
+
+<a href="/bmi" class="tool-card bmi">
+<div class="tool-icon">⚖️</div>
+<div class="tool-name">BMI Calculator</div>
+<div class="tool-desc">Calculate your BMI and get health insights.</div>
+</a>
+
+<a href="/diet" class="tool-card diet">
+<div class="tool-icon">🥗</div>
+<div class="tool-name">Diet Plan</div>
+<div class="tool-desc">Generate personalized diet plans.</div>
+</a>
+
+<a href="/tracker" class="tool-card tracker">
+<div class="tool-icon">📊</div>
+<div class="tool-name">Weight Tracker</div>
+<div class="tool-desc">Track daily weight and progress.</div>
+</a>
+
+</div>
+
+<div class="section-label">Health Summary</div>
+
+<div class="summary-grid">
+
+<div class="stat-card">
+<div class="stat-label">Current Weight</div>
+<div class="stat-value">{{current_weight}}<span class="stat-unit">kg</span></div>
+<div class="stat-tag">Today</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">Target Weight</div>
+<div class="stat-value">{{target_weight}}<span class="stat-unit">kg</span></div>
+<div class="stat-tag">Goal</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-label">Remaining</div>
+<div class="stat-value">{{remaining}}<span class="stat-unit">kg</span></div>
+<div class="stat-tag">To Go</div>
+</div>
+
+</div>
+
+<div class="section-label">Goal Progress</div>
+
+<div class="progress-card">
+
+<div class="progress-header">
+<div class="progress-title">Weight Goal Progress</div>
+<div class="progress-pct">{{progress}}%</div>
+</div>
+
+<div class="progress-track">
+<div class="progress-fill"></div>
+</div>
+
+</div>
+
+<div class="section-label">Progress Chart</div>
+
+<div class="graph-card">
+
+<div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;">Weight Over Time</div>
+
+{% if current_weight != "-" %}
+<img src="{{ url_for('static', filename='progress.png') }}">
+{% else %}
+<div class="empty-chart">
+No progress data yet. Start logging your weight in the tracker.
+</div>
+{% endif %}
+
+</div>
+
+</main>
+
+<div class="chatbot-icon" onclick="toggleChatbot()">💬</div>
+
+<div class="chatbot-box" id="chatbotBox">
+
+<div class="chat-header">
+Health Assistant 🤖
+<span onclick="toggleChatbot()" style="float:right;cursor:pointer;">✖</span>
+</div>
+
+<div id="chat-messages"></div>
+
+<div class="chat-input">
+<input type="text" id="message" placeholder="Ask something...">
+<button onclick="sendMessage()">Send</button>
+</div>
+
+</div>
+
+<script>
+
+function toggleChatbot(){
+
+let box=document.getElementById("chatbotBox")
+let chat=document.getElementById("chat-messages")
+let input=document.getElementById("message")
+
+if(box.style.display==="block"){
+
+box.style.display="none"
+chat.innerHTML=""
+
+}else{
+
+box.style.display="block"
+input.focus()
+
+}
+
+}
+
+function sendMessage(){
+
+let input=document.getElementById("message")
+let message=input.value
+
+if(message.trim()==="") return
+
+let chat=document.getElementById("chat-messages")
+
+chat.innerHTML+=`<div class="user">${message}</div>`
+
+fetch("/chatbot",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:message})
+})
+.then(res=>res.json())
+.then(data=>{
+
+chat.innerHTML+=`<div class="bot">${data.reply}</div>`
+chat.scrollTop=chat.scrollHeight
+
+})
+
+input.value=""
+
+}
+
+document.getElementById("message").addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+sendMessage()
+}
+
+})
+
+</script>
+
+</body>
+</html>

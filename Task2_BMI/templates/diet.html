@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitalTrack — Diet Plan Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --coral: #ff6b81;
+    --coral-dark: #e85a70;
+    --deep: #0a1628;
+    --card: #111e35;
+    --mint: #00c9a7;
+    --border: rgba(255,107,129,0.18);
+    --border2: rgba(255,255,255,0.07);
+    --text: #e8f0fe;
+    --muted: #7a8ca8;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--deep);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(255,107,129,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,107,129,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(255,107,129,0.07) 0%, transparent 70%);
+    top: 0; right: 10%;
+    pointer-events: none; z-index: 0;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--mint), #00a885); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .brand-name { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--text); }
+
+  .back-btn { background: var(--card); border: 1px solid var(--border2); color: var(--muted); padding: 7px 14px; border-radius: 8px; font-size: 13px; text-decoration: none; transition: all 0.2s; }
+  .back-btn:hover { color: var(--text); border-color: var(--border); }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative; z-index: 1;
+  }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .page-header p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 32px;
+    animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: var(--text);
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 13px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    border-radius: 9px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--coral);
+    background: rgba(255,107,129,0.06);
+    box-shadow: 0 0 0 3px rgba(255,107,129,0.12);
+  }
+
+  .field input::placeholder { color: rgba(255,255,255,0.2); }
+  .field select option { background: var(--card); color: var(--text); }
+
+  .error-msg {
+    background: rgba(255,107,129,0.1);
+    border: 1px solid rgba(255,107,129,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--coral);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--coral), var(--coral-dark));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(255,107,129,0.3);
+    margin-top: 4px;
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(255,107,129,0.4); }
+
+  /* Results */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 32px;
+    animation: slideUp 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+    grid-column: span 2;
+  }
+
+  .goal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(255,107,129,0.15), rgba(255,107,129,0.08));
+    border: 1px solid rgba(255,107,129,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    color: var(--coral);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .meal-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: all 0.2s;
+  }
+
+  .meal-item:hover { background: rgba(255,107,129,0.05); border-color: rgba(255,107,129,0.15); }
+
+  .meal-time {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .meal-food {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .meal-emoji {
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <a href="/dashboard" class="brand">
+      <div class="brand-icon">💚</div>
+      <span class="brand-name">VitalTrack</span>
+    </a>
+    <a href="/dashboard" class="back-btn">← Dashboard</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>🥗 Diet Plan Generator</h1>
+      <p>Fill in your details to get a personalized daily meal plan.</p>
+    </div>
+
+    <div class="layout">
+      <div class="card" style="grid-column:span 2;">
+        {% if error %}<div class="error-msg">⚠ {{error}}</div>{% endif %}
+        <form method="POST">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;">
+            <div class="field">
+              <label>BMI Category</label>
+              <select name="bmi_category">
+                <option>Underweight</option>
+                <option>Normal</option>
+                <option>Overweight</option>
+                <option>Obese</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Age</label>
+              <input type="number" name="age" placeholder="e.g. 28" required>
+            </div>
+            <div class="field">
+              <label>Gender</label>
+              <select name="gender">
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Diet Type</label>
+              <select name="diet_type">
+                <option>Vegetarian</option>
+                <option>Non-Vegetarian</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Current Weight (kg)</label>
+              <input type="number" name="current_weight" placeholder="e.g. 72" required>
+            </div>
+            <div class="field">
+              <label>Target Weight (kg)</label>
+              <input type="number" name="target_weight" placeholder="e.g. 65" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Generate My Diet Plan →</button>
+        </form>
+      </div>
+
+      {% if plan %}
+      <div class="result-card">
+        <div class="goal-badge">🎯 Goal: {{goal}}</div>
+        <div class="meal-grid">
+          <div class="meal-item">
+            <span class="meal-emoji"></span>
+            <div class="meal-time">Breakfast</div>
+            <div class="meal-food">{{plan.Breakfast}}</div>
+          </div>
+          <div class="meal-item">
+            <span class="meal-emoji"></span>
+            <div class="meal-time">Mid Morning Snack</div>
+            <div class="meal-food">{{plan.Snack1}}</div>
+          </div>
+          <div class="meal-item">
+            <span class="meal-emoji"></span>
+            <div class="meal-time">Lunch</div>
+            <div class="meal-food">{{plan.Lunch}}</div>
+          </div>
+          <div class="meal-item">
+            <span class="meal-emoji"></span>
+            <div class="meal-time">Evening Snack</div>
+            <div class="meal-food">{{plan.Snack2}}</div>
+          </div>
+          <div class="meal-item" style="grid-column:span 2;">
+            <span class="meal-emoji"></span>
+            <div class="meal-time">Dinner</div>
+            <div class="meal-food">{{plan.Dinner}}</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

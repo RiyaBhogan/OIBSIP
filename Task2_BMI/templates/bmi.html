@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitalTrack — BMI Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --mint: #00c9a7;
+    --emerald: #00a885;
+    --deep: #0a1628;
+    --card: #111e35;
+    --border: rgba(0,201,167,0.18);
+    --border2: rgba(255,255,255,0.07);
+    --text: #e8f0fe;
+    --muted: #7a8ca8;
+    --blue: #4a90e2;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--deep);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(74,144,226,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(74,144,226,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(74,144,226,0.08) 0%, transparent 70%);
+    top: 0; left: 30%;
+    pointer-events: none; z-index: 0;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--mint), var(--emerald)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .brand-name { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--text); }
+
+  .back-btn {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { color: var(--text); border-color: var(--border); }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative; z-index: 1;
+  }
+
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .page-header p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 36px;
+    animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field.full { grid-column: span 2; }
+
+  .field label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .field input, .field select {
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--blue);
+    background: rgba(74,144,226,0.06);
+    box-shadow: 0 0 0 3px rgba(74,144,226,0.12);
+  }
+
+  .field input::placeholder { color: rgba(255,255,255,0.2); }
+  .field select option { background: var(--card); color: var(--text); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--blue), #2a70c2);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(74,144,226,0.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(74,144,226,0.4); }
+
+  /* Result */
+  .result {
+    margin-top: 28px;
+    padding: 28px;
+    background: linear-gradient(135deg, rgba(74,144,226,0.1) 0%, rgba(0,201,167,0.08) 100%);
+    border: 1px solid rgba(74,144,226,0.2);
+    border-radius: 16px;
+    animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .bmi-display {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .bmi-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+  .bmi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 64px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--mint), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .bmi-category {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 16px;
+    background: rgba(0,201,167,0.15);
+    border: 1px solid rgba(0,201,167,0.25);
+    border-radius: 100px;
+    color: var(--mint);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .result-rows { display: flex; flex-direction: column; gap: 12px; }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .result-row:last-child { border-bottom: none; }
+
+  .result-row-label { font-size: 12px; color: var(--muted); flex-shrink: 0; padding-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .result-row-value { font-size: 14px; color: var(--text); text-align: right; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <nav>
+    <a href="/dashboard" class="brand">
+      <div class="brand-icon">💚</div>
+      <span class="brand-name">VitalTrack</span>
+    </a>
+    <a href="/dashboard" class="back-btn">← Dashboard</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>⚖️ BMI Calculator</h1>
+      <p>Enter your details below to calculate your Body Mass Index.</p>
+    </div>
+
+    <div class="card">
+      <form method="POST">
+        <div class="form-grid">
+          <div class="field">
+            <label>Age</label>
+            <input type="number" name="age" placeholder="e.g. 25" required>
+          </div>
+          <div class="field">
+            <label>Gender</label>
+            <select name="gender">
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Height (cm)</label>
+            <input type="number" name="height" placeholder="e.g. 170" required>
+          </div>
+          <div class="field">
+            <label>Weight (kg)</label>
+            <input type="number" name="weight" placeholder="e.g. 68" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Calculate BMI →</button>
+      </form>
+
+      {% if bmi %}
+      <div class="result">
+        <div class="bmi-display">
+          <div class="bmi-label">Your BMI Score</div>
+          <div class="bmi-value">{{bmi}}</div>
+          <div class="bmi-category">{{category}}</div>
+        </div>
+        <div class="result-rows">
+          <div class="result-row">
+            <div class="result-row-label">Advice</div>
+            <div class="result-row-value">{{advice}}</div>
+          </div>
+          <div class="result-row">
+            <div class="result-row-label">Healthy Range</div>
+            <div class="result-row-value">{{min_weight}} kg – {{max_weight}} kg</div>
+          </div>
+          <div class="result-row">
+            <div class="result-row-label">Suggestion</div>
+            <div class="result-row-value">{{suggestion}}</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>
