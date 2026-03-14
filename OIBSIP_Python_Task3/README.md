@@ -1,94 +1,190 @@
 SecurePass – Password Security Dashboard
 
+SecurePass is a web-based password security application built using Flask. The system helps users generate strong passwords, analyze password strength using machine learning, check whether a password has appeared in known data breaches, and securely store credentials using encryption.
 
-
-SecurePass is a web-based password security application that helps users generate strong passwords, analyze their strength using machine learning, check whether passwords appear in known data breaches, and securely store credentials using an encrypted password manager.
-
-
+The application integrates password generation, machine learning based strength prediction, breach detection using an external API, and a secure password manager with user authentication.
 
 Features
+User Authentication
 
+User registration system
 
+Secure login using password hashing
 
-Password Generator – Generates secure passwords with customizable characters
+Session-based authentication
 
+Logout functionality
 
+Password Generator
 
-Passphrase Generator – Creates easy-to-remember secure passphrases
+Generate strong passwords based on user-defined criteria
 
+Custom number of uppercase letters, lowercase letters, numbers, and symbols
 
+Randomized password generation
 
-Custom Word Password Generator – Converts a user-provided word into a stronger password
+Password Strength Prediction (Machine Learning)
 
+Machine learning model evaluates password strength
 
+Calculates password entropy
 
-Password Strength Analysis – Displays character distribution and entropy
+Predicts approximate password cracking time
 
+Password Breach Detection
 
+Checks if a password has appeared in known data breaches
 
-ML Strength Prediction – Predicts password strength and estimated crack time
+Uses the HaveIBeenPwned API with SHA-1 hashing and k-anonymity
 
+Secure Password Manager
 
+Save login credentials for websites
 
-Breach Checker – Checks if a password appears in known data breaches
+Passwords encrypted using Fernet symmetric encryption
 
+Retrieve and decrypt stored passwords
 
+Delete saved credentials
 
-Password Manager – Securely stores and manages website credentials
+Technologies Used
+Backend
 
+Python
 
+Flask
 
-Tech Stack
+Machine Learning
 
+Scikit-learn
 
+Joblib
 
-Frontend: HTML, CSS, JavaScript
+Database
 
+SQLite
 
+Security
 
-Backend: Python (Flask)
+Werkzeug Password Hashing
 
+Cryptography (Fernet Encryption)
 
+SHA-1 Hashing for breach checking
 
-Database: SQLite
+API
 
+HaveIBeenPwned Password API
 
+Other Libraries
 
-Security: Fernet Encryption, SHA-1 hashing
+Requests
 
+Random
 
+String
 
-Machine Learning: Scikit-learn, Joblib
+Hashlib
 
+Project Structure
+SecurePass
+│
+├── app.py
+├── passwords.db
+├── secret.key
+│
+├── models
+│   ├── strength_model.pkl
+│   └── time_model.pkl
+│
+├── utils.py
+│
+├── templates
+│   └── index.html
+│
+└── static
+    ├── css
+    ├── js
+    └── images
+Installation
 
+Clone the repository
 
-Run the Project
+git clone https://github.com/RiyaBhogan/OIBSIP.git
 
+Navigate to the project directory
 
+cd OIBSIP/OIBSIP_Python_Task3
 
-Install dependencies
+Install required dependencies
 
-
-
-pip install flask cryptography requests scikit-learn joblib
-
-
+pip install flask cryptography requests joblib scikit-learn werkzeug
 
 Run the application
 
-
-
 python app.py
 
-
-
-Open in browser
-
-
+Open the application in your browser
 
 http://127.0.0.1:5000
+Database
 
+The application uses SQLite database passwords.db with the following tables:
 
+Users Table
 
-This project demonstrates password generation, encryption, breach detection, and machine learning-based password security analysis.
+id
 
+username
+
+password (hashed)
+
+Passwords Table
+
+id
+
+user_id
+
+website
+
+username
+
+password (encrypted)
+
+Security Implementation
+
+The project implements several security mechanisms:
+
+Password hashing using Werkzeug
+
+Encryption of stored passwords using Fernet symmetric encryption
+
+Secure session management
+
+SHA-1 hashing for privacy-preserving breach detection
+
+K-anonymity approach when querying the breach database
+
+Machine Learning Models
+
+Two machine learning models are used in the application:
+
+Strength Prediction Model
+Predicts the strength category of a password based on features such as entropy and length.
+
+Crack Time Prediction Model
+Estimates the approximate time required to crack the password.
+
+These models are loaded using Joblib during application startup.
+
+Future Improvements
+
+Password pattern detection
+
+Two-factor authentication
+
+Password sharing with encryption
+
+Browser extension integration
+
+Password strength visualization charts
